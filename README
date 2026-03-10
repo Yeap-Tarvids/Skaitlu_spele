@@ -1,0 +1,29 @@
+# Spēlēs apraksts
+
+Spēles sākumā ir dota ģenerētā skaitļu virkne, kas sastāv no skaitļiem `1, 2, 3, 4, 5, 6`.  
+Spēlētāji izpilda gājienus pēc kārtas.  
+Abiem spēlētājiem **punktus** skaita kopā, un spēlēs sākumā tiem ir vērtība `0`.  
+Kā arī ir **banka**, kas arī ir kopīga abiem spēlētājiem un tās sākotnējā vērtība arī ir `0`.  
+
+## Atļautie gājieni
+
+* Spēlētāji savā gājienā var saskaitīt skaitļu pāri (piemēram, ja virkne ir `1234` atļautie pāri ir `12` un `34`, bet `23` nav atļauts pāris) un to aizvietot ar šī pāra summu un kopīgajiem `punktiem` pieskaita 1.
+  * Ja summa ir lielāka par `6`, tad no summas atņem `6` (tas ir `7=1`, `8=2`, `9=3`, `10=4`, `11=5`, `12=6`) un kopīgai `bankai` pieskaita 1.
+* Spēlētāji var arī nodzēst skaitli, kas ir palicis bez pāra, tādejādi atņemot vienu punktu no kopīgā `punktu` skaita.
+
+## Spēles beigas
+Spēle beidzas, kad virknē ir palicis viens skaitlis.  
+Kad spēle ir beigusies, kopējam `punktu` skaitam pieskaita `bankā` esošos punktus un aplūko virknē atlikušo skaitli.  
+* Ja gan *kopīgais punktu skaits*, gan *virknē atlikušais skaitlis* ir ***pāra*** skaitļi, **uzvar spēlētājs, kas uzsāka spēli**;
+* Ja gan *kopīgais punktu skaits*, gan *virknē atlikušais skaitlis* ir ***nepāra*** skaitļi, **uzvar otrs spēlētājs**;
+* Citos gadījumos rezultāts ir *neizšķirts*.
+
+# Komanda
+
+Artūrs Vrubļevskis - 211RDB361  
+Daniels Millers - 241RDB218  
+Edmunds Steļmačenoks - 241RDB266  
+Patriks Jānis Ārmanis - 221RDB529  
+Ričards Tarvids - 241RDB204
+
+ 
