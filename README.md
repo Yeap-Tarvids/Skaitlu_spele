@@ -1,9 +1,10 @@
 # Spēlēs apraksts
 
-Spēles sākumā ir dota ģenerētā skaitļu virkne, kas sastāv no skaitļiem `1, 2, 3, 4, 5, 6`.  
+Spēles sākumā ir dota ģenerētā skaitļu virkne, kas sastāv no skaitļiem `1, 2, 3, 4, 5, 6` un kuras garums ir vismaz 15 bet ne vairāk kā 25 skaitļi.  
 Spēlētāji izpilda gājienus pēc kārtas.  
 Abiem spēlētājiem **punktus** skaita kopā, un spēlēs sākumā tiem ir vērtība `0`.  
 Kā arī ir **banka**, kas arī ir kopīga abiem spēlētājiem un tās sākotnējā vērtība arī ir `0`.  
+
 
 ## Atļautie gājieni
 
