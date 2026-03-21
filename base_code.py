@@ -54,8 +54,14 @@ class GameState:
     def get_virkne(self):
         return self.virkne
     
-    def set_virkne(self, new_virkne):
-        self.virkne = new_virkne
+    def Pair_count(self):
+        return math.ceil(len(self.virkne)/2)
+    
+    def Copy(self):
+        return GameState(self.virkne.copy(), self.punkti, self.banka)
+    
+    def __hash__(self):
+        return hash((self.virkne, self.punkti, self.banka))
 
 
 def generateVirkne(length):

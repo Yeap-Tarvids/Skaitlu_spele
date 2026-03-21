@@ -17,7 +17,7 @@ def GenerateTree(root: Node, depth):
 
     for index in range(1, root.data.Pair_count()+1):
         sub_game = root.data.Copy()
-        sub_game.SumPair(index)
+        sub_game.sumPair(index)
         child = Node(sub_game)
         GenerateTree(child, depth-1)
         root.addChild(child)
@@ -36,7 +36,7 @@ def printTree(root: Node, indent = 0):
 
 
 def main():
-    gameState = game.GameState(game.GenerateVirkne(5))
+    gameState = game.GameState(game.generateVirkne(5))
 
     root = Node(gameState)
 
