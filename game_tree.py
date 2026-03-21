@@ -7,12 +7,12 @@ class Node:
         self.heristic = 0
         self.children = []
         self.is_end = False
+        self.index = 0
 
     def addChild(self, child):
         child.parent = self
         self.children.append(child)
         return
-    
 
 def GenerateTree(root: Node, depth):
     if root.data.Has_finished() or depth == 0:
@@ -24,46 +24,31 @@ def GenerateTree(root: Node, depth):
         child = Node(sub_game)
         end = GenerateTree(child, depth-1)
         root.addChild(child)
+        child.index = index
         if end:
             child.is_end = True
             child.heristic = evalState(child.data)
     
     return None
 
-
 def printTree(root: Node, indent = 0):
     if root is None:
         return
     
     prefix = '\t'*indent
-    print(f'{prefix}{root.data.virkne} | heur: {root.heristic}')
+    print(f'{prefix}{root.data.virkne}')
     for child in root.children:
         printTree(child, indent+1)
 
-def isEven(x):
-    return x % 2 == 0
-
-def isOdd(x):
-    return x % 2 == 1
-
 def evalState(game_state: game.GameState):
-    parity = evalSequence(game_state.get_virkne()) # virknes paritāte (virknei būs visticamāk pāra vai nepāra gala rezultāts)
-    parity_value = 0
-    match parity:
-        case 1, 0 :
-            parity_value = parity
-        case _:
-            parity_value = (parity % 2)
-    score_value = game_state.punkti
-    bank_value = game_state.banka
-    evalValue = 0
-    if isOdd(parity_value) and isOdd(score_value+bank_value):
-        evalValue = (50*parity_value) + score_value + bank_value
-    elif isEven(parity_value) and isEven(score_value+bank_value):
-        evalValue = ((50*parity_value) + score_value + bank_value) * -1
+    parity_value = evalSequence(game_state.get_virkne()) % 2 # Kāda, visticammāk, būs virknes paritāte (vai virknei būs visticamāk pāra vai nepāra gala rezultāts)
+    score_total = game_state.punkti + game_state.banka
+    if parity_value == 1 and score_total % 2 == 1:
+        return 1000 + score_total
+    elif parity_value == 0 and score_total % 2 == 0:
+        return -1000 + score_total
     else:
-        evalValue = 0
-    return evalValue
+        return score_total
 
 def evalSequence(seq):
     while len(seq) > 1:
