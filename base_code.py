@@ -39,13 +39,13 @@ class GameState:
 
     def winCon(self):
         if ((self.punkti+self.banka) % 2 == 0) and self.get_virkne()[0]%2 == 0:
-            print("\033[0;34mPlayer 1 wins!\033[0m")
+            #print("\033[0;34mPlayer 1 wins!\033[0m")
             return 1
         elif ((self.punkti+self.banka) % 2 == 1) and self.get_virkne()[0]%2 == 1:
-            print("\033[0;32mPlayer 2 wins!\033[0m")
+            #print("\033[0;32mPlayer 2 wins!\033[0m")
             return -1
         else:
-            print("\033[1;33mDraw!\033[0m")
+            #print("\033[1;33mDraw!\033[0m")
             return 0
 
     def Has_finished(self):

@@ -1,8 +1,10 @@
 from typing import Callable
 import pygame as pg
 import math
-import base_code as spele
+import time
+import base_code as GM
 import Alfa_beta as AB
+import minimax as MM
 
 TITLE = "Mākslīgais Intelekts - 20. komanda"
 WIDTH = 1280
@@ -10,6 +12,8 @@ HEIGHT = 720
 WINDOWS_SIZE = (WIDTH, HEIGHT)
 SEQ_LENGTH = 15
 AI_MOVE = False
+AI_STARTS = False
+ALPHA_BETA = False
 
 def lighten_color(color: pg.Color):
     intensity = 0.7
@@ -60,6 +64,14 @@ def setAIMove():
     global AI_MOVE
     AI_MOVE = not AI_MOVE
 
+def AIStarts():
+    global AI_STARTS
+    AI_STARTS = not AI_STARTS
+
+def changeAlphaBeta():
+    global ALPHA_BETA
+    ALPHA_BETA = not ALPHA_BETA
+
 def main():
 
     pg.init()
@@ -70,13 +82,15 @@ def main():
     clock = pg.time.Clock()
     running = True
     
-    game = spele.GameState(spele.generateVirkne(SEQ_LENGTH))
+    game = GM.GameState(GM.generateVirkne(SEQ_LENGTH))
 
     def restart():
         nonlocal game
-        game = spele.GameState(spele.generateVirkne(SEQ_LENGTH))
+        game = GM.GameState(GM.generateVirkne(SEQ_LENGTH))
         nonlocal msg_box_text
         msg_box_text = ''
+        global AI_MOVE
+        AI_MOVE = AI_STARTS
 
     def inc_length():
         global SEQ_LENGTH
@@ -106,14 +120,34 @@ def main():
     pad_amount = int(seq_button_width * 0.1)
     padding = int(seq_button_width+pad_amount)
     
+
     msg_box_text = ''
+    tree_gen_time = 0
+    move_choose_time = 0
 
     while running:
         if AI_MOVE:
-            bestPair = AB.best_move(game)
-            pair = game.virkne[(bestPair-1)*2:(bestPair-1)*2+2]
-            pair_click(bestPair)
-            msg_box_text = f'Dators izvēlējās {bestPair} pāri ({','.join(map(str, pair))})'
+            if not game.Has_finished():
+                if ALPHA_BETA:
+                    root = AB.Node(AB.clone(game))
+
+                    t_start = time.time()
+                    AB.generate_tree(root, 3)
+                    tree_gen_time = time.time() - t_start
+                
+                    t_start = time.time()
+                    AB.alphabeta(root, 3, -math.inf, math.inf, AI_STARTS)
+
+                    bestPair = AB.best_move(root)
+                    move_choose_time = time.time() - t_start
+                else:
+                    bestPair = MM.ai_move(game, AI_STARTS)
+                print(bestPair)
+                pair = game.virkne[(bestPair-1)*2:(bestPair-1)*2+2]
+                pair_click(bestPair)
+                msg_box_text = f'Dators izvēlējās {bestPair} pāri ({','.join(map(str, pair))})'
+            else:
+                setAIMove()
 
         
         labels.clear()
@@ -143,10 +177,24 @@ def main():
             30
         )
 
+        tree_gen_label = Label(
+            (110, 30),
+            f'Koks izveidots : {tree_gen_time*1000:.3f} ms',
+            16
+        )
+
+        move_choose_label = Label(
+            (110, 50),
+            f'Gājiens izvēlēts: {move_choose_time*1000:.3f} ms',
+            16
+        )
+
         labels.append(punkti)
         labels.append(banka)
         labels.append(msg_box)
         labels.append(length_label)
+        labels.append(tree_gen_label)
+        labels.append(move_choose_label)
     
 
         dec_color = "#e66b6b"
@@ -178,6 +226,35 @@ def main():
             '-'
         )
 
+        ai_first_color = "#ff4747"
+        if AI_STARTS:
+            ai_first_color = "#6aff6a"
+
+        ai_first_button = Button(
+            (center[0]+WIDTH//2-100, center[1]),
+            150,
+            50,
+            ai_first_color,
+            5,
+            AIStarts,
+            'Sāk dators'
+        )
+
+        algorithm_text = 'Minimax'
+        if ALPHA_BETA:
+            algorithm_text = 'Alpha Beta'
+
+        algorithm_button = Button(
+            (center[0]+WIDTH//2-100, center[1]-60),
+            150,
+            50,
+            "#6aff6a",
+            5,
+            changeAlphaBeta,
+            algorithm_text
+        )
+
+
         buttons.append(inc_button)
         buttons.append(dec_button)
         buttons.append(
@@ -202,6 +279,8 @@ def main():
                 text="Iziet"
                 )
             )
+        buttons.append(ai_first_button)
+        buttons.append(algorithm_button)
 
         pair_amount = math.ceil(len(game.get_virkne())/2)
         seq_bounding_box = ((padding*pair_amount)-(pad_amount*pair_amount), seq_button_height)
@@ -217,7 +296,7 @@ def main():
                     "#93ff4b",
                     5,
                     (lambda pair_index=i+1: pair_click(pair_index)), 
-                    "".join(map(str, game.get_virkne()[2*i:2*(i+1)]))
+                    " ".join(map(str, game.get_virkne()[2*i:2*(i+1)]))
                     )
                 )
 
