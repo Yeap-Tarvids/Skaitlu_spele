@@ -58,9 +58,7 @@ def get_moves(state):
 
 def generate_tree(node, depth):
     if depth == 0 or len(node.state.virkne) == 1:
-        return 1
-
-    count = 1
+        return
 
     for move in get_moves(node.state):
         new_state = clone(node.state)
@@ -69,9 +67,7 @@ def generate_tree(node, depth):
         child = Node(new_state, move)
         node.children.append(child)
 
-        count += generate_tree(child, depth-1)
-
-    return count
+        generate_tree(child, depth-1)
 
 def evaluate(state):
     val = state.punkti + 2*state.banka
@@ -84,9 +80,6 @@ def evaluate(state):
     val -= len(state.virkne)
 
     return val
-
-
-# ---------------- ALPHA-BETA ---------------- #
 
 def alphabeta(node, depth, alpha, beta, maximizing):
     if depth == 0 or not node.children:
@@ -112,7 +105,6 @@ def alphabeta(node, depth, alpha, beta, maximizing):
         node.value = val
         return val
 
-
 def best_move(node):
     best = None
     best_val = math.inf
@@ -126,86 +118,71 @@ def best_move(node):
 
 def get_sequence_length():
     while True:
-        user_input = input("Ievadi virknes garumu (15-25): ")
-
         try:
-            length = int(user_input)
+            length = int(input("Ievadi virknes garumu (15-25): "))
+            if 15 <= length <= 25:
+                return length
         except ValueError:
-            print("Kļūda: ievadi skaitli!")
-            continue
-
-        if 15 <= length <= 25:
-            return length
-        else:
-            print("Kļūda: garumam jābūt no 15 līdz 25!")
-
-
-# ---------------- GAME ---------------- #
+            pass
+        print("Kļūda: ievadi skaitli no 15 līdz 25!")
 
 def generate_seq(n):
     return [random.randint(1, 6) for _ in range(n)]
 
 
-def play_game(starter, depth=3, show=True):
-    length = get_sequence_length()  # ✅ NEW
+def determine_winner(state, starter):
+    total_points = state.punkti + state.banka
+    last = state.virkne[0]
+
+    print("\n--- SPĒLES BEIGAS ---")
+    print(f"Pēdējais skaitlis: {last}")
+    print(f"Kopējie punkti (ar banku): {total_points}")
+
+    if last % 2 == 0 and total_points % 2 == 0:
+        print("Uzvar spēles sākuma spēlētājs!" if starter else "Uzvar dators!")
+    elif last % 2 == 1 and total_points % 2 == 1:
+        print("Uzvar otrais spēlētājs!" if starter else "Uzvar spēles sākuma spēlētājs!")
+    else:
+        print("Neizšķirts!")
+
+
+def play_game(starter, depth=3):
+    length = get_sequence_length()
     state = GameState(generate_seq(length))
 
-    print(f"\nĢenerētā virkne ({length} skaitļi):")
+    print("\n--- JAUNA SPĒLE ---")
+    print(f"Ģenerētā virkne ({length} skaitļi):")
+    state.PrintState()
 
     player = starter
 
-    total_nodes = 0
-    total_time = 0
-
     while len(state.virkne) > 1:
-        if show:
-            state.PrintState()
 
         if player:
-            if show:
-                print("Spēlētājs:")
-            move = int(input("Ievadi indeksu: "))
+            print("Spēlētājs:")
+            try:
+                move = int(input("Ievadi indeksu: "))
+            except ValueError:
+                print("Kļūda: jāievada skaitlis!")
+                continue
         else:
-            if show:
-                print("Dators domā...")
+            print("Dators domā...")
 
             root = Node(clone(state))
-            t0 = time.time()
-
-            nodes = generate_tree(root, depth)
-            total_nodes += nodes
-
+            generate_tree(root, depth)
             alphabeta(root, depth, -math.inf, math.inf, False)
 
             move = best_move(root)
-            total_time += time.time() - t0
+            print("AI izvēlējās:", move)
 
-            if show:
-                print("AI izvēlējās:", move)
+        if not state.sumPair(move):
+            print("Nepareizs gājiens")
+            continue
 
-        state.sumPair(move)
+        state.PrintState()
         player = not player
 
-    return state, total_nodes, total_time
-
-def run_experiments():
-    wins = 0
-    total_nodes = 0
-    total_time = 0
-
-    for _ in range(10):
-        state, nodes, t = play_game(False, show=False)
-
-        total_nodes += nodes
-        total_time += t
-
-        if (state.punkti + state.banka) % 2 == 1:
-            wins += 1
-
-    print("\n--- EKSPERIMENTI (Alpha-Beta) ---")
-    print("AI uzvaras:", wins)
-    print("Vidējais laiks:", total_time/10)
-    print("Vidējās virsotnes:", total_nodes/10)
+    determine_winner(state, starter)
 
 def main():
     while True:
@@ -215,10 +192,6 @@ def main():
 
         if input("Atkārtot? (y/n): ") != "y":
             break
-
-        if input("Veikt eksperimentus? (y/n): ") == "y":
-            run_experiments()
-
 
 if __name__ == "__main__":
     main()
