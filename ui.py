@@ -2,6 +2,7 @@ from typing import Callable
 import pygame as pg
 import math
 import base_code as spele
+import Alfa_beta as AB
 
 TITLE = "Mākslīgais Intelekts - 20. komanda"
 WIDTH = 1280
@@ -74,6 +75,8 @@ def main():
     def restart():
         nonlocal game
         game = spele.GameState(spele.generateVirkne(SEQ_LENGTH))
+        nonlocal msg_box_text
+        msg_box_text = ''
 
     def inc_length():
         global SEQ_LENGTH
@@ -103,10 +106,15 @@ def main():
     pad_amount = int(seq_button_width * 0.1)
     padding = int(seq_button_width+pad_amount)
     
+    msg_box_text = ''
+
     while running:
         if AI_MOVE:
-            game.sumPair(1) # pagaidām lai ir šitā, hacky way, shall be changed
-            setAIMove()
+            bestPair = AB.best_move(game)
+            pair = game.virkne[(bestPair-1)*2:(bestPair-1)*2+2]
+            pair_click(bestPair)
+            msg_box_text = f'Dators izvēlējās {bestPair} pāri ({pair})'
+
         
         labels.clear()
         buttons.clear()
@@ -123,9 +131,9 @@ def main():
             20
         )
         
-        win_text = Label(
+        msg_box = Label(
             center,
-            'test',
+            msg_box_text,
             30
         )
 
@@ -137,7 +145,9 @@ def main():
 
         labels.append(punkti)
         labels.append(banka)
+        labels.append(msg_box)
         labels.append(length_label)
+    
 
         dec_color = "#e66b6b"
         inc_color = "#e66b6b"
@@ -232,10 +242,13 @@ def main():
 
             match game.winCon():
                 case 1:
+                    msg_box.updateText('Uzvarēja cilvēks!')
                     screen.fill("#b6ffb4")
                 case 0:
+                    msg_box.updateText('Neizšķirts')
                     screen.fill("#fff4b4")
                 case -1:
+                    msg_box.updateText('Uzvarēja dators!')
                     screen.fill("#ffb4b4")
         else:
             screen.fill("#f8f6e6")
@@ -249,18 +262,6 @@ def main():
             else:
                 b.render_color = b.color
             b.draw(screen)
-
-        if game.Has_finished():
-
-            match game.winCon():
-                case 1:
-                    win_text.updateText('Uzvarēja cilvēks!')
-                case 0:
-                    win_text.updateText('Neizšķirts')
-                case -1:
-                    win_text.updateText('Uzvarēja dators!')
-
-            win_text.draw(screen)
         
         display.flip()
 
