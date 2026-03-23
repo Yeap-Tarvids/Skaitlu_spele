@@ -16,7 +16,7 @@ class GameState:
 
     def sumPair(self, pairIndex):
         totalPairs = math.ceil(len(self.virkne)/2)
-        if pairIndex not in range(1, totalPairs+1):
+        if pairIndex not in range(1, totalPairs+1) or len(self.virkne) <= 1:
             return -1
         
         seq = self.virkne
@@ -40,16 +40,28 @@ class GameState:
     def winCon(self):
         if ((self.punkti+self.banka) % 2 == 0) and self.get_virkne()[0]%2 == 0:
             print("\033[0;34mPlayer 1 wins!\033[0m")
+            return 1
         elif ((self.punkti+self.banka) % 2 == 1) and self.get_virkne()[0]%2 == 1:
             print("\033[0;32mPlayer 2 wins!\033[0m")
+            return -1
         else:
             print("\033[1;33mDraw!\033[0m")
+            return 0
+
+    def Has_finished(self):
+        return len(self.virkne) <= 1
     
     def get_virkne(self):
         return self.virkne
     
-    def set_virkne(self, new_virkne):
-        self.virkne = new_virkne
+    def Pair_count(self):
+        return math.ceil(len(self.virkne)/2)
+    
+    def Copy(self):
+        return GameState(self.virkne.copy(), self.punkti, self.banka)
+    
+    def __hash__(self):
+        return hash((self.virkne, self.punkti, self.banka))
 
 
 def generateVirkne(length):
@@ -108,8 +120,6 @@ def main():
     print("================")
     
     obj.winCon()
-
-
 
 if __name__ == "__main__":
     main()
