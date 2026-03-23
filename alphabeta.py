@@ -1,4 +1,4 @@
-import spele_DM as game
+import base_code as game
 import game_tree as gt
 import math
 

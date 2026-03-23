@@ -113,7 +113,7 @@ def main():
             bestPair = AB.best_move(game)
             pair = game.virkne[(bestPair-1)*2:(bestPair-1)*2+2]
             pair_click(bestPair)
-            msg_box_text = f'Dators izvēlējās {bestPair} pāri ({pair})'
+            msg_box_text = f'Dators izvēlējās {bestPair} pāri ({','.join(map(str, pair))})'
 
         
         labels.clear()

@@ -27,15 +27,24 @@ def Alpha_Beta(tree: gt.Node, alpha, beta, maximizing):
         return value
 
 def BestMove(root: gt.Node, maximizing = True):
-    best_value = ALPHA
+    if maximizing:
+        best_value = ALPHA
+    else:
+        best_value = BETA
+    
     best_pair_index = 1
     index = 0
     for child in root.children:
         value = Alpha_Beta(child, ALPHA, BETA, not maximizing)
         
-        if value > best_value:
-            best_value = value
-            best_pair_index = index
+        if maximizing:
+            if value > best_value:
+                best_value = value
+                best_pair_index = index
+        else:
+            if value < best_value:
+                best_value = value
+                best_pair_index = index
         
         index += 1
     return best_pair_index
