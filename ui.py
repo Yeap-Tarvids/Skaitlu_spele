@@ -3,7 +3,8 @@ import pygame as pg
 import math
 import time
 import base_code as GM
-import Alfa_beta as AB
+import game_tree as GT
+import alpha_beta as AB
 import minimax as MM
 
 TITLE = "Mākslīgais Intelekts - 20. komanda"
@@ -129,20 +130,18 @@ def main():
         if AI_MOVE:
             if not game.Has_finished():
                 if ALPHA_BETA:
-                    root = AB.Node(AB.clone(game))
+                    root = GT.Node(game.Copy())
 
                     t_start = time.time()
-                    AB.generate_tree(root, 3)
+                    GT.GenerateTree(root, 3)
                     tree_gen_time = time.time() - t_start
                 
                     t_start = time.time()
-                    AB.alphabeta(root, 3, -math.inf, math.inf, AI_STARTS)
-
-                    bestPair = AB.best_move(root)
+                    bestPair = AB.BestMove(root, not AI_STARTS) + 1
                     move_choose_time = time.time() - t_start
                 else:
                     bestPair = MM.ai_move(game, AI_STARTS)
-                print(bestPair)
+                
                 pair = game.virkne[(bestPair-1)*2:(bestPair-1)*2+2]
                 pair_click(bestPair)
                 msg_box_text = f'Dators izvēlējās {bestPair} pāri ({','.join(map(str, pair))})'
@@ -318,17 +317,29 @@ def main():
                     pass
 
         if game.Has_finished():
+            if AI_STARTS:
+                match game.winCon():
+                    case -1:
+                        msg_box.updateText('Uzvarēja cilvēks!')
+                        screen.fill("#b6ffb4")
+                    case 0:
+                        msg_box.updateText('Neizšķirts')
+                        screen.fill("#fff4b4")
+                    case 1:
+                        msg_box.updateText('Uzvarēja dators!')
+                        screen.fill("#ffb4b4")
 
-            match game.winCon():
-                case 1:
-                    msg_box.updateText('Uzvarēja cilvēks!')
-                    screen.fill("#b6ffb4")
-                case 0:
-                    msg_box.updateText('Neizšķirts')
-                    screen.fill("#fff4b4")
-                case -1:
-                    msg_box.updateText('Uzvarēja dators!')
-                    screen.fill("#ffb4b4")
+            else:
+                match game.winCon():
+                    case 1:
+                        msg_box.updateText('Uzvarēja cilvēks!')
+                        screen.fill("#b6ffb4")
+                    case 0:
+                        msg_box.updateText('Neizšķirts')
+                        screen.fill("#fff4b4")
+                    case -1:
+                        msg_box.updateText('Uzvarēja dators!')
+                        screen.fill("#ffb4b4")
         else:
             screen.fill("#f8f6e6")
 
