@@ -31,15 +31,6 @@ def GenerateTree(root: Node, depth):
     
     return None
 
-def printTree(root: Node, indent = 0):
-    if root is None:
-        return
-    
-    prefix = '\t'*indent
-    print(f'{prefix}{root.data.virkne}')
-    for child in root.children:
-        printTree(child, indent+1)
-
 def evalState(game_state: game.GameState):
     parity_value = evalSequence(game_state.get_virkne()) % 2 # Kāda, visticammāk, būs virknes paritāte (vai virknei būs visticamāk pāra vai nepāra gala rezultāts)
     score_total = game_state.punkti + game_state.banka

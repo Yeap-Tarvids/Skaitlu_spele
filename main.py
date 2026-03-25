@@ -129,19 +129,21 @@ def main():
     while running:
         if AI_MOVE:
             if not game.Has_finished():
-                if ALPHA_BETA:
-                    root = GT.Node(game.Copy())
+                root = GT.Node(game.Copy())
 
-                    t_start = time.time()
-                    GT.GenerateTree(root, 3)
-                    tree_gen_time = time.time() - t_start
-                
-                    t_start = time.time()
+                t_start = time.time()
+                GT.GenerateTree(root, 3)
+                tree_gen_time = time.time() - t_start
+            
+                t_start = time.time()
+
+                if ALPHA_BETA:
                     bestPair = AB.BestMove(root, not AI_STARTS) + 1
-                    move_choose_time = time.time() - t_start
                 else:
-                    bestPair = MM.ai_move(game, AI_STARTS)
+                    bestPair = MM.ai_move(root, AI_STARTS) + 1
                 
+                move_choose_time = time.time() - t_start
+
                 pair = game.virkne[(bestPair-1)*2:(bestPair-1)*2+2]
                 pair_click(bestPair)
                 msg_box_text = f'Dators izvēlējās {bestPair} pāri ({','.join(map(str, pair))})'
