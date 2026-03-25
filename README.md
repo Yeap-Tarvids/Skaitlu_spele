@@ -19,6 +19,12 @@ Kad spēle ir beigusies, kopējam `punktu` skaitam pieskaita `bankā` esošos pu
 * Ja gan *kopīgais punktu skaits*, gan *virknē atlikušais skaitlis* ir ***nepāra*** skaitļi, **uzvar otrs spēlētājs**;
 * Citos gadījumos rezultāts ir *neizšķirts*.
 
+# Spēles faili
+
+Spēles faili (`.zip` arhīvs un/vai `.exe` fails) ir pieejami [*šeit*](https://github.com/Yeap-Tarvids/Skaitlu_spele/releases). 
+
+Ja vēlās palaist spēli neizmantojot `.exe`, tad ir jānodrošina, ka uz datora ir `pygame` bibliotēka, un jāpalaiž [`main.py`](https://github.com/Yeap-Tarvids/Skaitlu_spele/blob/main/main.py) fails.
+
 # Komanda
 
 Artūrs Vrubļevskis - 211RDB361  
