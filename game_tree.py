@@ -43,12 +43,12 @@ def printTree(root: Node, indent = 0):
 def evalState(game_state: game.GameState):
     parity_value = evalSequence(game_state.get_virkne()) % 2 # Kāda, visticammāk, būs virknes paritāte (vai virknei būs visticamāk pāra vai nepāra gala rezultāts)
     score_total = game_state.punkti + game_state.banka
-    if parity_value == 1 and score_total % 2 == 1:
+    if parity_value == 1 and score_total % 2 == 1: # Ja pozīcija būs visticamāk labāka spēlētājam, kas uzsāka spēli
         return 1000 + score_total
-    elif parity_value == 0 and score_total % 2 == 0:
+    elif parity_value == 0 and score_total % 2 == 0: # Ja pozīcija būs visticamāk sliktāka spēlētājam, kas uzsāka spēli
         return -1000 + score_total
-    else:
-        return score_total
+    else: # Ja pozīcija visticamāk būs neizšķirts rezultāts
+        return score_total 
 
 def evalSequence(seq):
     while len(seq) > 1:
