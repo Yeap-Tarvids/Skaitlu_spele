@@ -15,6 +15,7 @@ SEQ_LENGTH = 15
 AI_MOVE = False
 AI_STARTS = False
 ALPHA_BETA = False
+DEPTH = 3 
 
 def lighten_color(color: pg.Color):
     intensity = 0.7
@@ -92,6 +93,10 @@ def main():
         msg_box_text = ''
         global AI_MOVE
         AI_MOVE = AI_STARTS
+        nonlocal total_node_count
+        total_node_count = 0
+        nonlocal visited_node_count
+        visited_node_count = 0
 
     def inc_length():
         global SEQ_LENGTH
@@ -125,6 +130,8 @@ def main():
     msg_box_text = ''
     tree_gen_time = 0
     move_choose_time = 0
+    total_node_count = 0
+    visited_node_count = 0
 
     while running:
         if AI_MOVE:
@@ -132,9 +139,11 @@ def main():
                 root = GT.Node(game.Copy())
 
                 t_start = time.time()
-                GT.GenerateTree(root, 3)
+                GT.GenerateTree(root, DEPTH, root)
                 tree_gen_time = time.time() - t_start
-            
+                
+                total_node_count = root.children_count
+                
                 t_start = time.time()
 
                 if ALPHA_BETA:
@@ -143,6 +152,8 @@ def main():
                     bestPair = MM.ai_move(root, AI_STARTS) + 1
                 
                 move_choose_time = time.time() - t_start
+                
+                visited_node_count = root.visited_count
 
                 pair = game.virkne[(bestPair-1)*2:(bestPair-1)*2+2]
                 pair_click(bestPair)
@@ -190,12 +201,26 @@ def main():
             16
         )
 
+        total_node_label = Label(
+            (130, 70),
+            f'Kopējais virsotņu skaits: {total_node_count}',
+            16
+        )
+
+        visited_node_label = Label(
+            (130, 90),
+            f'Aplūkoto virsotņu skaits: {visited_node_count}',
+            16
+        )
+
         labels.append(punkti)
         labels.append(banka)
         labels.append(msg_box)
         labels.append(length_label)
         labels.append(tree_gen_label)
         labels.append(move_choose_label)
+        labels.append(total_node_label)
+        labels.append(visited_node_label)
     
 
         dec_color = "#e66b6b"

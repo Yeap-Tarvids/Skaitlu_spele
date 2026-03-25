@@ -6,6 +6,8 @@ class Node:
         self.data = data
         self.heristic = 0
         self.children = []
+        self.children_count = 0
+        self.visited_count = 0
         self.is_end = False
         self.index = 0
 
@@ -14,16 +16,17 @@ class Node:
         self.children.append(child)
         return
 
-def GenerateTree(root: Node, depth):
-    if root.data.Has_finished() or depth == 0:
+def GenerateTree(curr_node: Node, depth, root: Node):
+    root.children_count += 1
+    if curr_node.data.Has_finished() or depth == 0:
         return True
 
-    for index in range(1, root.data.Pair_count()+1):
-        sub_game = root.data.Copy()
+    for index in range(1, curr_node.data.Pair_count()+1):
+        sub_game = curr_node.data.Copy()
         sub_game.sumPair(index)
         child = Node(sub_game)
-        end = GenerateTree(child, depth-1)
-        root.addChild(child)
+        end = GenerateTree(child, depth-1, root)
+        curr_node.addChild(child)
         child.index = index
         if end:
             child.is_end = True
@@ -52,11 +55,9 @@ def evalSequence(seq):
 def main():
     gameState = game.GameState(game.generateVirkne(10))
 
-    root = Node(gameState)
+    curr_node = Node(gameState)
 
-    GenerateTree(root, 4)
-
-    printTree(root)
+    GenerateTree(curr_node, 4)
 
 
 

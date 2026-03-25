@@ -51,10 +51,6 @@ class GameState:
     
     def Copy(self):
         return GameState(self.virkne.copy(), self.punkti, self.banka)
-    
-    def __hash__(self):
-        return hash((self.virkne, self.punkti, self.banka))
-
 
 def generateVirkne(length):
     virkne = []

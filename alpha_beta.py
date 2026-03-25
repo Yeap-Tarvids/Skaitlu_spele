@@ -5,22 +5,24 @@ import math
 ALPHA = -math.inf
 BETA = math.inf
 
-def Alpha_Beta(tree: gt.Node, alpha, beta, maximizing):
-    if tree.is_end:
-        return tree.heristic
+def Alpha_Beta(curr_node: gt.Node, alpha, beta, maximizing, root: gt.Node):
+    root.visited_count += 1
+
+    if curr_node.is_end:
+        return curr_node.heristic
 
     if maximizing:
         value = ALPHA
-        for child in tree.children:
-            value = max(value, Alpha_Beta(child, alpha, beta, False))
+        for child in curr_node.children:
+            value = max(value, Alpha_Beta(child, alpha, beta, False, root))
             alpha = max(alpha, value)
             if alpha >= beta:
                 break
         return value
     else:
         value = BETA
-        for child in tree.children:
-            value = min(value, Alpha_Beta(child, alpha, beta, True))
+        for child in curr_node.children:
+            value = min(value, Alpha_Beta(child, alpha, beta, True, root))
             beta = min(beta, value)
             if alpha >= beta:
                 break
@@ -35,7 +37,7 @@ def BestMove(root: gt.Node, maximizing = True):
     best_pair_index = 1
     index = 0
     for child in root.children:
-        value = Alpha_Beta(child, ALPHA, BETA, not maximizing)
+        value = Alpha_Beta(child, ALPHA, BETA, not maximizing, root)
         
         if maximizing:
             if value > best_value:
@@ -46,7 +48,6 @@ def BestMove(root: gt.Node, maximizing = True):
                 best_value = value
                 best_pair_index = index
         
-        index += 1
     return best_pair_index
 
 
@@ -58,7 +59,7 @@ def main():
 
         root = gt.Node(game_state)
         
-        gt.GenerateTree(root, 3)
+        gt.Generatecurr_node(root, 3)
         
         best_pairs[BestMove(root)-1] += 1
     
