@@ -36,7 +36,7 @@ def BestMove(root: gt.Node, maximizing = True):
     
     best_pair_index = 1
     index = 0
-    for child in root.children:
+    for index, child in enumerate(root.children):
         value = Alpha_Beta(child, ALPHA, BETA, not maximizing, root)
         
         if maximizing:
